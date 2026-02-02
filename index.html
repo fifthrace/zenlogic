@@ -220,11 +220,25 @@
     </div>
     
     <div id="settings-toggle" onclick="toggleSettings()" title="Settings">⚙</div>
+    <div id="help-toggle" onclick="toggleHelp()" style="cursor: pointer; font-size: 20px; position: absolute; top: 20px; right: 55px; opacity: 0.4; transition: opacity 0.2s; user-select: none; color: #333;" title="How to Play">?</div>
 
     <div id="settings-panel">
         <h3 style="margin-top: 0;">Settings</h3>
         <button onclick="clearAllProgress()" style="background: #fa5252; color: white;">Reset All Neural Mapping</button>
         <button onclick="toggleSettings()" style="background: #e9ecef; color: #333;">Close</button>
+    </div>
+
+    <div id="help-panel" style="display: none; position: absolute; top: 60px; right: 20px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 100; width: 280px; font-size: 14px; line-height: 1.5;">
+        <h3 style="margin-top: 0;">Protocol</h3>
+        <p><strong>Objective:</strong> Identify the hidden neural pattern by satisfying all proximity clues.</p>
+        <p><strong>Clues:</strong> Each number indicates the exact count of active nodes in its 8-cell neighborhood.</p>
+        <p><strong>Feedback:</strong></p>
+        <ul style="padding-left: 20px;">
+            <li><span style="color: #40c057; font-weight: bold;">Green:</span> Proximity satisfied.</li>
+            <li><span style="color: #fa5252; font-weight: bold;">Red:</span> Over-saturated (too many neighbors).</li>
+            <li><span style="color: #888; font-weight: bold;">Grey:</span> Under-saturated (needs more neighbors).</li>
+        </ul>
+        <button onclick="toggleHelp()" style="width: 100%; margin-top: 10px; padding: 10px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; background: #e9ecef; color: #333;">Close</button>
     </div>
     
     <div id="level-menu"></div>
@@ -244,6 +258,14 @@
             const panel = document.getElementById('settings-panel');
             const isHidden = window.getComputedStyle(panel).display === 'none';
             panel.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) document.getElementById('help-panel').style.display = 'none';
+        }
+
+        function toggleHelp() {
+            const panel = document.getElementById('help-panel');
+            const isHidden = window.getComputedStyle(panel).display === 'none';
+            panel.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) document.getElementById('settings-panel').style.display = 'none';
         }
 
         function clearAllProgress() {
