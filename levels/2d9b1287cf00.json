@@ -1,41 +1,41 @@
 {
-  "uid": "754f99f35e9e",
-  "name": "Quantum Point",
+  "uid": "2d9b1287cf00",
+  "name": "Atomic Horizon",
   "width": 3,
   "height": 3,
   "clues": [
     [
-      1,
-      1,
+      2,
+      2,
       2
     ],
     [
-      1,
+      5,
+      5,
+      4
+    ],
+    [
+      2,
       3,
       2
-    ],
-    [
-      0,
-      2,
-      1
     ]
   ],
   "solution": [
+    [
+      1,
+      1,
+      0
+    ],
     [
       0,
       1,
       0
     ],
     [
-      0,
-      0,
-      1
-    ],
-    [
-      0,
-      0,
+      1,
+      1,
       1
     ]
   ],
-  "logical_steps": 6
+  "logical_steps": 5
 }
