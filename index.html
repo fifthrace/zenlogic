@@ -29,13 +29,19 @@
         }
         .text-btn {
             cursor: pointer;
-            transition: color 0.2s, opacity 0.2s;
+            transition: color 0.2s, opacity 0.2s, transform 0.2s;
             display: flex;
             align-items: center;
             gap: 5px;
             opacity: 0.4;
         }
         .text-btn:hover { color: #333; opacity: 1; }
+        .text-btn.highlight {
+            opacity: 1;
+            color: #40c057;
+            font-weight: 800;
+            transform: scale(1.1);
+        }
         
         #grid {
             display: grid;
@@ -212,6 +218,7 @@
         <span id="back-btn" class="text-btn" onclick="showMenu()" style="display: none;">← Exit</span>
         <span id="undo-btn" class="text-btn" onclick="undoMove()" style="display: none;">↩ Undo</span>
         <span id="reset-btn" class="text-btn" onclick="resetGame()" style="display: none;">↺ Clear</span>
+        <span id="next-btn" class="text-btn" onclick="nextLevel()" style="display: none;">→ Next</span>
     </div>
     
     <div id="settings-toggle" onclick="toggleSettings()" title="Settings">⚙</div>
@@ -425,6 +432,8 @@
             document.getElementById('back-btn').style.display = 'flex';
             document.getElementById('undo-btn').style.display = 'flex';
             document.getElementById('reset-btn').style.display = 'flex';
+            document.getElementById('next-btn').style.display = 'flex';
+            document.getElementById('next-btn').classList.remove('highlight');
             
             const saved = getInProgress(key);
             state = saved ? saved : Array(currentLevel.height).fill().map(() => Array(currentLevel.width).fill(0));
@@ -557,6 +566,7 @@
                 const statusEl = document.getElementById('status');
                 if (statusEl.innerText !== "Origin Identified") {
                     statusEl.innerText = "Origin Identified";
+                    document.getElementById('next-btn').classList.add('highlight');
                     if (!silent) {
                         confetti({
                             particleCount: 150,
@@ -662,6 +672,18 @@
             const oldText = el.innerText;
             el.innerText = "Copied!";
             setTimeout(() => el.innerText = oldText, 1000);
+        }
+
+        function nextLevel() {
+            if (!currentLevel || levelManifest.length === 0) return;
+            
+            const currentIndex = levelManifest.findIndex(l => l.id === currentLevel.id);
+            let nextIndex = currentIndex + 1;
+            
+            // Loop back to start if at the end
+            if (nextIndex >= levelManifest.length) nextIndex = 0;
+            
+            loadLevel(levelManifest[nextIndex].id);
         }
 
         // Boot
