@@ -233,12 +233,12 @@
     <div id="how-to-play-panel">
         <h3>How to Play</h3>
         <p>The goal is to satisfy every number on the grid.</p>
-        <p><strong>The Numbers:</strong> Each number tells you exactly how many of its neighbors must be <strong>blue</strong>.</p>
-        <p><strong>The Colors:</strong> Click a tile to make it blue.
+        <p><strong>The Numbers:</strong> Each number tells you exactly how many <strong>blue</strong> tiles must be in its <strong>presence</strong>.</p>
+        <p><strong>The Colors:</strong> Click a tile to change its state.
             <ul>
-                <li><span style="color:#40c057; font-weight:bold;">Green Border:</span> Correct number of neighbors.</li>
-                <li><span style="color:#fa5252; font-weight:bold;">Red Border:</span> Too many neighbors!</li>
-                <li><strong>Grey Border:</strong> Need more neighbors.</li>
+                <li><span style="color:#40c057; font-weight:bold;">Green Border:</span> Correct presence.</li>
+                <li><span style="color:#fa5252; font-weight:bold;">Red Border:</span> Presence is too high.</li>
+                <li><strong>Grey Border:</strong> Need more presence.</li>
             </ul>
         </p>
         <button class="btn-primary" onclick="toggleHelp()">Got it!</button>
