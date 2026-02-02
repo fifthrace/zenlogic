@@ -302,9 +302,13 @@
             let inProgress = JSON.parse(localStorage.getItem('zen_in_progress') || '{}');
             if (hasActiveCells) {
                 inProgress[id] = state;
-                unmarkCompleted(id); // If we're working on it, it's not "complete" anymore
+                // Only unmark if the NEW state isn't a winning state anymore
+                // (Handled by checkWin called right after saveInProgress)
             }
-            else delete inProgress[id];
+            else {
+                delete inProgress[id];
+                unmarkCompleted(id);
+            }
             localStorage.setItem('zen_in_progress', JSON.stringify(inProgress));
         }
 
@@ -325,7 +329,11 @@
                 completed.push(id);
                 localStorage.setItem('zen_completed', JSON.stringify(completed));
             }
-            clearInProgress(id);
+            // Save the final winning state so it persists when re-opened
+            let inProgress = JSON.parse(localStorage.getItem('zen_in_progress') || '{}');
+            inProgress[id] = state;
+            localStorage.setItem('zen_in_progress', JSON.stringify(inProgress));
+            
             document.getElementById('share-controls').style.display = 'flex';
             document.getElementById('override-btn').style.display = 'none';
         }
@@ -510,7 +518,7 @@
             if (!currentLevel) return;
             let solved = true;
             let totalActive = 0;
-            const targetActive = currentLevel.targetActive || 0;
+            const targetActive = currentLevel.targetActive || (currentLevel.solution ? currentLevel.solution.flat().reduce((a, b) => a + b, 0) : 0);
 
             for (let y = 0; y < currentLevel.height; y++) {
                 for (let x = 0; x < currentLevel.width; x++) {
@@ -559,10 +567,13 @@
                     }
                 }
                 markCompleted(currentLevel.id);
-            } else if (!silent) {
-                document.getElementById('status').innerText = "Map the proximities";
-            } else if (silent && solved && totalActive === 0) {
-                 document.getElementById('status').innerText = "Map the proximities";
+            } else {
+                if (!silent) {
+                    document.getElementById('status').innerText = "Map the proximities";
+                    document.getElementById('share-controls').style.display = 'none';
+                    document.getElementById('override-btn').style.display = 'block';
+                }
+                unmarkCompleted(currentLevel.id);
             }
         }
 
