@@ -170,7 +170,7 @@
         }
         #settings-toggle:hover { opacity: 1; }
         
-        #settings-panel {
+        #settings-panel, #how-to-play-panel {
             display: none;
             position: absolute;
             top: 60px;
@@ -182,10 +182,14 @@
             z-index: 100;
             width: 240px;
         }
-        #settings-panel h3 { margin-top: 0; margin-bottom: 15px; }
-        #settings-panel .section { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        #settings-panel .section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        #settings-panel button {
+        #how-to-play-panel { width: 300px; left: 50%; transform: translateX(-50%); top: 100px; }
+        #how-to-play-panel h3 { margin-top: 0; }
+        #how-to-play-panel p { font-size: 14px; line-height: 1.5; color: #555; }
+        
+        .section { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        
+        button {
             width: 100%;
             margin-top: 8px;
             padding: 10px;
@@ -207,24 +211,37 @@
         <span id="back-btn" class="text-btn" onclick="showMenu()" style="display: none;">← Back</span>
         <span id="undo-btn" class="text-btn" onclick="undoMove()" style="display: none;">↩ Undo</span>
         <span id="reset-btn" class="text-btn" onclick="resetGame()" style="display: none;">↺ Reset</span>
+        <span id="help-btn" class="text-btn" onclick="toggleHelp()">? Rules</span>
     </div>
     
     <div id="settings-toggle" onclick="toggleSettings()" title="Settings">⚙</div>
 
     <div id="settings-panel">
         <h3>Settings</h3>
-        
         <div class="section">
             <div style="font-size: 12px; color: #888; margin-bottom: 8px;">DATA MANAGEMENT</div>
             <button class="btn-primary" onclick="exportData()">Export Progress</button>
             <button class="btn-primary" onclick="document.getElementById('import-file').click()">Import Progress</button>
             <input type="file" id="import-file" style="display: none" accept=".json" onchange="importData(event)">
         </div>
-
         <div class="section">
             <button class="btn-danger" onclick="clearAllProgress()">Clear All Progress</button>
             <button class="btn-ghost" onclick="toggleSettings()">Close</button>
         </div>
+    </div>
+
+    <div id="how-to-play-panel">
+        <h3>How to Play</h3>
+        <p>The goal is to satisfy every number on the grid.</p>
+        <p><strong>The Numbers:</strong> Each number tells you exactly how many of its 8 neighbors must be <strong>blue</strong>.</p>
+        <p><strong>The Colors:</strong> Click a tile to make it blue.
+            <ul>
+                <li><span style="color:#40c057; font-weight:bold;">Green Border:</span> Correct number of neighbors.</li>
+                <li><span style="color:#fa5252; font-weight:bold;">Red Border:</span> Too many neighbors!</li>
+                <li><strong>Grey Border:</strong> Need more neighbors.</li>
+            </ul>
+        </p>
+        <button class="btn-primary" onclick="toggleHelp()">Got it!</button>
     </div>
     
     <div id="level-menu"></div>
@@ -241,6 +258,14 @@
             const panel = document.getElementById('settings-panel');
             const isHidden = window.getComputedStyle(panel).display === 'none';
             panel.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) document.getElementById('how-to-play-panel').style.display = 'none';
+        }
+
+        function toggleHelp() {
+            const panel = document.getElementById('how-to-play-panel');
+            const isHidden = window.getComputedStyle(panel).display === 'none';
+            panel.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) document.getElementById('settings-panel').style.display = 'none';
         }
 
         function clearAllProgress() {
@@ -271,22 +296,16 @@
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    if (data.completed) {
-                        localStorage.setItem('zen_completed', JSON.stringify(data.completed));
-                    }
-                    if (data.inProgress) {
-                        localStorage.setItem('zen_in_progress', JSON.stringify(data.inProgress));
-                    }
+                    if (data.completed) localStorage.setItem('zen_completed', JSON.stringify(data.completed));
+                    if (data.inProgress) localStorage.setItem('zen_in_progress', JSON.stringify(data.inProgress));
                     alert("Progress imported successfully!");
                     location.reload();
                 } catch (err) {
-                    alert("Failed to import data. Please check the file format.");
-                    console.error(err);
+                    alert("Failed to import data.");
                 }
             };
             reader.readAsText(file);
@@ -304,9 +323,7 @@
         async function fetchManifest() {
             try {
                 const response = await fetch('manifest.json');
-                if (response.ok) {
-                    levelManifest = await response.json();
-                }
+                if (response.ok) levelManifest = await response.json();
             } catch (e) { console.error("Could not load manifest", e); }
         }
 
@@ -345,11 +362,9 @@
         function showMenu() {
             window.history.pushState({}, '', window.location.pathname);
             document.getElementById('main-header').innerText = "Zen Logic";
-            
             document.getElementById('back-btn').style.display = 'none';
             document.getElementById('undo-btn').style.display = 'none';
             document.getElementById('reset-btn').style.display = 'none';
-            
             document.getElementById('level-menu').style.display = 'flex';
             document.getElementById('game-view').style.display = 'none';
             initMenu();
@@ -372,19 +387,16 @@
             categories.forEach(cat => {
                 const filtered = levelManifest.filter(cat.filter);
                 const allInCat = cat.name.includes('3x3') ? [levelsCache.tutorial, ...filtered] : filtered;
-
                 if (allInCat.length > 0) {
                     const header = document.createElement('h2');
                     header.className = 'cat-title';
                     header.innerText = cat.name;
                     menuEl.appendChild(header);
-
                     allInCat.forEach(level => {
                         const item = document.createElement('div');
                         item.className = 'menu-item';
                         if (completed.includes(level.id)) item.classList.add('completed');
                         else if (inProgress[level.id]) item.classList.add('in-progress');
-                        
                         item.onclick = () => loadLevel(level.id);
                         item.innerHTML = `
                             <div class="menu-box">${level.display || (level.width + 'x' + level.height)}</div>
@@ -398,47 +410,32 @@
 
         async function loadLevel(key) {
             if (!key) return showMenu();
-
             let levelData = levelsCache[key];
             if (!levelData || !levelData.clues) {
                 try {
                     const response = await fetch(`levels/${key}.json`);
                     if (response.ok) {
                         const fetched = await response.json();
-                        levelData = {
-                            ...fetched,
-                            id: key,
-                            title: fetched.name || "Generated",
-                            display: fetched.display || `${fetched.width}x${fetched.height}`
-                        };
+                        levelData = { ...fetched, id: key, title: fetched.name || "Generated", display: fetched.display || `${fetched.width}x${fetched.height}` };
                         levelsCache[key] = levelData;
                     }
                 } catch (e) { console.error(e); }
             }
-
             if (!levelData || !levelData.clues) return showMenu();
-
             currentLevel = levelData;
             document.getElementById('main-header').innerText = currentLevel.title;
-            
             document.getElementById('back-btn').style.display = 'flex';
             document.getElementById('undo-btn').style.display = 'flex';
             document.getElementById('reset-btn').style.display = 'flex';
-            
             const saved = getInProgress(key);
             state = saved ? saved : Array(currentLevel.height).fill().map(() => Array(currentLevel.width).fill(0));
             history = [];
-
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('level') !== key) {
-                window.history.pushState({}, '', `?level=${key}`);
-            }
-
+            if (urlParams.get('level') !== key) window.history.pushState({}, '', `?level=${key}`);
             document.getElementById('level-menu').style.display = 'none';
             document.getElementById('game-view').style.display = 'flex';
             document.getElementById('level-id-display').innerText = `UID: ${key}`;
             document.getElementById('status').innerText = "Solve the pattern!";
-            
             createGrid();
             updateUI();
         }
@@ -449,11 +446,9 @@
             const cellSize = currentLevel.width > 10 ? '35px' : '50px';
             const fontSize = currentLevel.width > 10 ? '14px' : '18px';
             const gap = currentLevel.width > 10 ? '5px' : '10px';
-            
             gridEl.style.gridGap = gap;
             gridEl.style.gridTemplateColumns = `repeat(${currentLevel.width}, ${cellSize})`;
             gridEl.innerHTML = '';
-            
             for (let y = 0; y < currentLevel.height; y++) {
                 for (let x = 0; x < currentLevel.width; x++) {
                     const cell = document.createElement('div');
@@ -518,7 +513,6 @@
                     }
                     const cell = document.getElementById(`cell-${x}-${y}`);
                     if (!cell) continue;
-                    
                     if (neighbors === currentLevel.clues[y][x]) {
                         cell.classList.add('correct');
                         cell.classList.remove('too-many');
@@ -535,19 +529,12 @@
                     const statusEl = document.getElementById('status');
                     if (statusEl.innerText !== "✨ Clarity Achieved!") {
                         statusEl.innerText = "✨ Clarity Achieved!";
-                        confetti({
-                            particleCount: 150,
-                            spread: 70,
-                            origin: { y: 0.6 },
-                            colors: ['#4dabf7', '#40c057', '#fab005']
-                        });
+                        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#4dabf7', '#40c057', '#fab005'] });
                     }
                 }
                 markCompleted(currentLevel.id);
             } else if (!silent) {
                 document.getElementById('status').innerText = "Solve the pattern!";
-            } else if (silent && solved && totalActive === 0) {
-                 document.getElementById('status').innerText = "Solve the pattern!";
             }
         }
 
@@ -571,7 +558,6 @@
             setTimeout(() => el.innerText = oldText, 1000);
         }
 
-        // Boot
         async function boot() {
             await fetchManifest();
             window.onpopstate = () => {
@@ -583,7 +569,6 @@
             if (initialLevel) loadLevel(initialLevel);
             else showMenu();
         }
-        
         boot();
     </script>
 </body>
