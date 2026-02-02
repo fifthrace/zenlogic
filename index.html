@@ -3,23 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zen Logic Prototype</title>
-    <link rel="manifest" href="manifest.webmanifest">
-    <meta name="theme-color" content="#4dabf7">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="assets/icon-192.png">
+    <title>Proximal</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
+            background-color: #f8f9fa;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            color: #333;
+            color: #212529;
         }
-        h1 { font-weight: 300; color: #555; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        h1 { font-weight: 200; color: #343a40; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; }
         
         #controls-row {
             display: flex;
@@ -109,6 +104,23 @@
             background: #40c057;
             color: white;
             border-radius: 50%;
+            width: 200px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+        /* Fixed checkmark styling */
+        .menu-item.completed .menu-box::after {
+            content: "✓";
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #40c057;
+            color: white;
+            border-radius: 50%;
             width: 20px;
             height: 20px;
             font-size: 12px;
@@ -161,25 +173,21 @@
             padding-bottom: 10px;
         }
         
-        #top-right-nav {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .icon-btn {
-            cursor: pointer;
-            opacity: 0.4;
-            transition: opacity 0.2s;
+        #settings-toggle { 
+            cursor: pointer; 
+            font-size: 20px; 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            opacity: 0.4; 
+            transition: opacity 0.2s; 
             user-select: none;
             color: #333;
-            font-weight: bold;
+            filter: grayscale(100%);
         }
-        .icon-btn:hover { opacity: 1; }
+        #settings-toggle:hover { opacity: 1; }
         
-        #settings-panel, #how-to-play-panel {
+        #settings-panel {
             display: none;
             position: absolute;
             top: 60px;
@@ -189,79 +197,45 @@
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             z-index: 100;
-            width: 240px;
+            width: 200px;
         }
-        #how-to-play-panel { width: 300px; left: 50%; transform: translateX(-50%); top: 100px; }
-        #how-to-play-panel h3 { margin-top: 0; }
-        #how-to-play-panel p { font-size: 14px; line-height: 1.5; color: #555; }
-        
-        .section { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        
-        button {
+        #settings-panel button {
             width: 100%;
-            margin-top: 8px;
+            margin-top: 10px;
             padding: 10px;
             border-radius: 6px;
             border: none;
             cursor: pointer;
             font-weight: 600;
-            font-size: 13px;
         }
-        .btn-primary { background: #4dabf7; color: white; }
-        .btn-danger { background: #fa5252; color: white; }
-        .btn-ghost { background: #e9ecef; color: #333; }
     </style>
 </head>
 <body>
-    <h1 id="main-header">Zen Logic</h1>
+    <h1 id="main-header">Proximal</h1>
 
     <div id="controls-row">
-        <span id="back-btn" class="text-btn" onclick="showMenu()">← Back</span>
-        <span id="undo-btn" class="text-btn" onclick="undoMove()">↩ Undo</span>
-        <span id="reset-btn" class="text-btn" onclick="resetGame()">↺ Reset</span>
+        <span id="back-btn" class="text-btn" onclick="showMenu()" style="display: none;">← Exit</span>
+        <span id="undo-btn" class="text-btn" onclick="undoMove()" style="display: none;">↩ Undo</span>
+        <span id="reset-btn" class="text-btn" onclick="resetGame()" style="display: none;">↺ Clear</span>
     </div>
     
-    <div id="top-right-nav">
-        <div id="help-toggle" class="icon-btn" style="font-size: 24px;" onclick="toggleHelp()" title="Rules">?</div>
-        <div id="settings-toggle" class="icon-btn" style="font-size: 20px;" onclick="toggleSettings()" title="Settings">⚙</div>
-    </div>
+    <div id="settings-toggle" onclick="toggleSettings()" title="Settings">⚙</div>
 
     <div id="settings-panel">
-        <h3>Settings</h3>
-        <div class="section">
-            <div style="font-size: 12px; color: #888; margin-bottom: 8px;">DATA MANAGEMENT</div>
-            <button class="btn-primary" onclick="exportData()">Export Progress</button>
-            <button class="btn-primary" onclick="document.getElementById('import-file').click()">Import Progress</button>
-            <input type="file" id="import-file" style="display: none" accept=".json" onchange="importData(event)">
-        </div>
-        <div class="section">
-            <button class="btn-danger" onclick="clearAllProgress()">Clear All Progress</button>
-            <button class="btn-ghost" onclick="toggleSettings()">Close</button>
-        </div>
-    </div>
-
-    <div id="how-to-play-panel">
-        <h3>How to Play</h3>
-        <p>The goal is to satisfy every number on the grid.</p>
-        <p><strong>The Numbers:</strong> Each number tells you exactly how many <strong>blue</strong> tiles must be in its <strong>presence</strong>.</p>
-        <p><strong>The Colors:</strong> Click a tile to change its state.
-            <ul>
-                <li><span style="color:#40c057; font-weight:bold;">Green Border:</span> Correct presence.</li>
-                <li><span style="color:#fa5252; font-weight:bold;">Red Border:</span> Presence is too high.</li>
-                <li><strong>Grey Border:</strong> Need more presence.</li>
-            </ul>
-        </p>
-        <button class="btn-primary" onclick="toggleHelp()">Got it!</button>
+        <h3 style="margin-top: 0;">Settings</h3>
+        <button onclick="clearAllProgress()" style="background: #fa5252; color: white;">Reset All Neural Mapping</button>
+        <button onclick="toggleSettings()" style="background: #e9ecef; color: #333;">Close</button>
     </div>
     
     <div id="level-menu"></div>
 
     <div id="game-view" style="display: none; flex-direction: column; align-items: center;">
         <div id="grid"></div>
-        <div id="status">Solve the pattern!</div>
+        <div id="status">Map the proximities</div>
+        <div id="share-controls" style="margin-top: 15px; display: none; gap: 10px;">
+            <button onclick="shareResult()" style="padding: 8px 16px; border-radius: 20px; border: 1px solid #4dabf7; background: white; color: #4dabf7; cursor: pointer; font-weight: 600;">Share Mapping</button>
+        </div>
         <div id="level-id-display" onclick="copyUID()" style="cursor: pointer; font-size: 10px; color: #ccc; margin-top: 10px; font-family: monospace;" title="Click to copy UID"></div>
-        <button id="share-btn" class="btn-primary" style="display: none; margin-top: 15px; width: auto;" onclick="shareZenPath()">Share Zen Path</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -270,18 +244,10 @@
             const panel = document.getElementById('settings-panel');
             const isHidden = window.getComputedStyle(panel).display === 'none';
             panel.style.display = isHidden ? 'block' : 'none';
-            if (isHidden) document.getElementById('how-to-play-panel').style.display = 'none';
-        }
-
-        function toggleHelp() {
-            const panel = document.getElementById('how-to-play-panel');
-            const isHidden = window.getComputedStyle(panel).display === 'none';
-            panel.style.display = isHidden ? 'block' : 'none';
-            if (isHidden) document.getElementById('settings-panel').style.display = 'none';
         }
 
         function clearAllProgress() {
-            if (confirm("Clear all progress? This cannot be undone.")) {
+            if (confirm("Reset all neural mapping?")) {
                 localStorage.removeItem('zen_completed');
                 localStorage.removeItem('zen_in_progress');
                 toggleSettings();
@@ -289,52 +255,21 @@
             }
         }
 
-        function exportData() {
-            const data = {
-                completed: getCompleted(),
-                inProgress: JSON.parse(localStorage.getItem('zen_in_progress') || '{}'),
-                version: 1,
-                timestamp: new Date().toISOString()
-            };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `zen_logic_save_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function importData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.completed) localStorage.setItem('zen_completed', JSON.stringify(data.completed));
-                    if (data.inProgress) localStorage.setItem('zen_in_progress', JSON.stringify(data.inProgress));
-                    alert("Progress imported successfully!");
-                    location.reload();
-                } catch (err) { alert("Failed to import data."); }
-            };
-            reader.readAsText(file);
-        }
-
         let levelManifest = [];
         const levelsCache = {
-            "tutorial": { "id": "tutorial", "title": "Welcome", "display": "3x3", "width": 3, "height": 3, "clues": [[2, 2, 1], [2, 2, 2], [3, 2, 2]], "difficulty": "easy" }
+            "tutorial": { "id": "tutorial", "title": "Calibration", "display": "3x3", "width": 3, "height": 3, "clues": [[2, 2, 1], [2, 2, 2], [3, 2, 2]], "difficulty": "easy", "targetActive": 3 }
         };
 
         let currentLevel = null;
         let state = [];
         let history = [];
-        let moveLog = []; // Tracks moves: { solvedCount, hasErrors }
 
         async function fetchManifest() {
             try {
                 const response = await fetch('manifest.json');
-                if (response.ok) levelManifest = await response.json();
+                if (response.ok) {
+                    levelManifest = await response.json();
+                }
             } catch (e) { console.error("Could not load manifest", e); }
         }
 
@@ -368,14 +303,17 @@
                 localStorage.setItem('zen_completed', JSON.stringify(completed));
             }
             clearInProgress(id);
+            document.getElementById('share-controls').style.display = 'flex';
         }
 
         function showMenu() {
             window.history.pushState({}, '', window.location.pathname);
-            document.getElementById('main-header').innerText = "Zen Logic";
+            document.getElementById('main-header').innerText = "Proximal";
+            
             document.getElementById('back-btn').style.display = 'none';
             document.getElementById('undo-btn').style.display = 'none';
             document.getElementById('reset-btn').style.display = 'none';
+            
             document.getElementById('level-menu').style.display = 'flex';
             document.getElementById('game-view').style.display = 'none';
             initMenu();
@@ -397,17 +335,21 @@
 
             categories.forEach(cat => {
                 const filtered = levelManifest.filter(cat.filter);
+                // Also add tutorial to training if manifest is empty or missing it
                 const allInCat = cat.name.includes('3x3') ? [levelsCache.tutorial, ...filtered] : filtered;
+
                 if (allInCat.length > 0) {
                     const header = document.createElement('h2');
                     header.className = 'cat-title';
                     header.innerText = cat.name;
                     menuEl.appendChild(header);
+
                     allInCat.forEach(level => {
                         const item = document.createElement('div');
                         item.className = 'menu-item';
                         if (completed.includes(level.id)) item.classList.add('completed');
                         else if (inProgress[level.id]) item.classList.add('in-progress');
+                        
                         item.onclick = () => loadLevel(level.id);
                         item.innerHTML = `
                             <div class="menu-box">${level.display || (level.width + 'x' + level.height)}</div>
@@ -421,42 +363,48 @@
 
         async function loadLevel(key) {
             if (!key) return showMenu();
+
             let levelData = levelsCache[key];
             if (!levelData || !levelData.clues) {
                 try {
                     const response = await fetch(`levels/${key}.json`);
                     if (response.ok) {
                         const fetched = await response.json();
-                        levelData = { ...fetched, id: key, title: fetched.name || "Generated", display: fetched.display || `${fetched.width}x${fetched.height}` };
+                        levelData = {
+                            ...fetched,
+                            id: key,
+                            title: fetched.name || "Mapping",
+                            display: fetched.display || `${fetched.width}x${fetched.height}`,
+                            targetActive: fetched.solution ? fetched.solution.flat().reduce((a, b) => a + b, 0) : 0
+                        };
                         levelsCache[key] = levelData;
                     }
                 } catch (e) { console.error(e); }
             }
-            if (!levelData || !levelData.clues) return showMenu();
-            currentLevel = levelData;
-            
-            // Calculate Min Moves (active cells in solution) on load
-            if (currentLevel.solution) {
-                currentLevel.minMoves = currentLevel.solution.flat().filter(v => v === 1).length;
-            } else {
-                currentLevel.minMoves = 0;
-            }
 
+            if (!levelData || !levelData.clues) return showMenu();
+
+            currentLevel = levelData;
             document.getElementById('main-header').innerText = currentLevel.title;
-            document.getElementById('back-btn').style.display = 'inline';
-            document.getElementById('undo-btn').style.display = 'inline';
-            document.getElementById('reset-btn').style.display = 'inline';
-            document.getElementById('share-btn').style.display = 'none';
+            
+            document.getElementById('back-btn').style.display = 'flex';
+            document.getElementById('undo-btn').style.display = 'flex';
+            document.getElementById('reset-btn').style.display = 'flex';
+            
             const saved = getInProgress(key);
             state = saved ? saved : Array(currentLevel.height).fill().map(() => Array(currentLevel.width).fill(0));
             history = [];
-            moveLog = []; 
+
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('level') !== key) window.history.pushState({}, '', `?level=${key}`);
+            if (urlParams.get('level') !== key) {
+                window.history.pushState({}, '', `?level=${key}`);
+            }
+
             document.getElementById('level-menu').style.display = 'none';
             document.getElementById('game-view').style.display = 'flex';
             document.getElementById('level-id-display').innerText = `UID: ${key}`;
-            document.getElementById('status').innerText = "Solve the pattern!";
+            document.getElementById('status').innerText = "Map the proximities";
+            
             createGrid();
             updateUI();
         }
@@ -467,9 +415,11 @@
             const cellSize = currentLevel.width > 10 ? '35px' : '50px';
             const fontSize = currentLevel.width > 10 ? '14px' : '18px';
             const gap = currentLevel.width > 10 ? '5px' : '10px';
+            
             gridEl.style.gridGap = gap;
             gridEl.style.gridTemplateColumns = `repeat(${currentLevel.width}, ${cellSize})`;
             gridEl.innerHTML = '';
+            
             for (let y = 0; y < currentLevel.height; y++) {
                 for (let x = 0; x < currentLevel.width; x++) {
                     const cell = document.createElement('div');
@@ -486,37 +436,10 @@
             checkWin(true);
         }
 
-        function getBoardStats() {
-            let solvedCount = 0;
-            let hasErrors = false;
-            for (let y = 0; y < currentLevel.height; y++) {
-                for (let x = 0; x < currentLevel.width; x++) {
-                    let neighbors = 0;
-                    for (let dy = -1; dy <= 1; dy++) {
-                        for (let dx = -1; dx <= 1; dx++) {
-                            if (dx === 0 && dy === 0) continue;
-                            let nx = x + dx, ny = y + dy;
-                            if (nx >= 0 && nx < currentLevel.width && ny >= 0 && ny < currentLevel.height) {
-                                if (state[ny][nx] === 1) neighbors++;
-                            }
-                        }
-                    }
-                    if (neighbors === currentLevel.clues[y][x]) solvedCount++;
-                    if (neighbors > currentLevel.clues[y][x]) hasErrors = true;
-                }
-            }
-            return { solvedCount, hasErrors };
-        }
-
         function toggleCell(x, y) {
             history.push(JSON.stringify(state));
             if (history.length > 50) history.shift();
             state[y][x] = state[y][x] === 0 ? 1 : 0;
-            
-            // Log move for efficiency
-            const { solvedCount, hasErrors } = getBoardStats();
-            moveLog.push({ solvedCount, hasErrors });
-
             saveInProgress(currentLevel.id, state);
             updateUI();
             checkWin();
@@ -525,7 +448,6 @@
         function undoMove() {
             if (history.length === 0) return;
             state = JSON.parse(history.pop());
-            moveLog.pop();
             saveInProgress(currentLevel.id, state);
             updateUI();
             checkWin();
@@ -547,28 +469,11 @@
             if (!currentLevel) return;
             let solved = true;
             let totalActive = 0;
-            const stats = getBoardStats();
-            totalActive = state.flat().filter(v => v === 1).length;
-            solved = stats.solvedCount === (currentLevel.width * currentLevel.height);
+            const targetActive = currentLevel.targetActive || 0;
 
-            if (solved && totalActive > 0) {
-                if (!silent) {
-                    const statusEl = document.getElementById('status');
-                    if (statusEl.innerText !== "✨ Clarity Achieved!") {
-                        statusEl.innerText = "✨ Clarity Achieved!";
-                        document.getElementById('share-btn').style.display = 'block';
-                        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#4dabf7', '#40c057', '#fab005'] });
-                    }
-                }
-                markCompleted(currentLevel.id);
-            } else if (!silent) {
-                document.getElementById('status').innerText = "Solve the pattern!";
-                document.getElementById('share-btn').style.display = 'none';
-            }
-            
-            // Still update the individual cell visual classes
             for (let y = 0; y < currentLevel.height; y++) {
                 for (let x = 0; x < currentLevel.width; x++) {
+                    if (state[y][x] === 1) totalActive++;
                     let neighbors = 0;
                     for (let dy = -1; dy <= 1; dy++) {
                         for (let dx = -1; dx <= 1; dx++) {
@@ -581,6 +486,7 @@
                     }
                     const cell = document.getElementById(`cell-${x}-${y}`);
                     if (!cell) continue;
+                    
                     if (neighbors === currentLevel.clues[y][x]) {
                         cell.classList.add('correct');
                         cell.classList.remove('too-many');
@@ -588,53 +494,72 @@
                         cell.classList.remove('correct');
                         if (neighbors > currentLevel.clues[y][x]) cell.classList.add('too-many');
                         else cell.classList.remove('too-many');
+                        solved = false;
                     }
                 }
             }
+
+            // If a target count exists, must match exactly.
+            // If not, just needs at least one active cell (prevents empty board win).
+            const isActuallySolved = targetActive > 0 ? (solved && totalActive === targetActive) : (solved && totalActive > 0);
+
+            if (isActuallySolved) {
+                console.log("LEVEL SOLVED", { id: currentLevel.id, totalActive, solved });
+                const statusEl = document.getElementById('status');
+                if (statusEl.innerText !== "Origin Identified") {
+                    statusEl.innerText = "Origin Identified";
+                    if (!silent) {
+                        confetti({
+                            particleCount: 150,
+                            spread: 70,
+                            origin: { y: 0.6 },
+                            colors: ['#4dabf7', '#40c057', '#fab005']
+                        });
+                    }
+                }
+                markCompleted(currentLevel.id);
+            } else if (!silent) {
+                document.getElementById('status').innerText = "Map the proximities";
+            } else if (silent && solved && totalActive === 0) {
+                 document.getElementById('status').innerText = "Map the proximities";
+            }
         }
 
-        function shareZenPath() {
+        function shareResult() {
             if (!currentLevel) return;
-            const minMoves = currentLevel.minMoves || 0;
-            const actualMoves = moveLog.length;
-            const efficiency = actualMoves > 0 ? Math.round((minMoves / actualMoves) * 100) : 100;
+            const uid = currentLevel.id;
+            const moves = history.length + 1; // Basic move count
+            const status = "Origin Identified";
+            const url = window.location.href;
             
-            let visual = "";
-            if (actualMoves > 0) {
-                // Ensure we show at least 1 block and at most 5
-                const numBlocks = Math.min(actualMoves, 5);
-                const segmentSize = actualMoves / numBlocks;
-                
-                for (let i = 0; i < numBlocks; i++) {
-                    const startIdx = Math.floor(i * segmentSize);
-                    const endIdx = Math.floor((i + 1) * segmentSize);
-                    const segment = moveLog.slice(startIdx, endIdx);
-                    
-                    if (segment.length === 0) continue;
-                    
-                    const hasError = segment.some(s => s.hasErrors);
-                    const startStats = startIdx === 0 ? { solvedCount: 0 } : moveLog[startIdx - 1];
-                    const progress = segment[segment.length-1].solvedCount - startStats.solvedCount;
-                    
-                    if (hasError) visual += "🟥";
-                    else if (progress > 0) visual += "🟩";
-                    else visual += "🟧";
+            // Generate a simple emoji representation of the grid
+            let gridEmoji = "";
+            for (let y = 0; y < currentLevel.height; y++) {
+                for (let x = 0; x < currentLevel.width; x++) {
+                    gridEmoji += state[y][x] === 1 ? "🟩" : "⬜";
                 }
+                gridEmoji += "\n";
             }
-            visual += "✨";
-            const text = `Zen Logic: ${currentLevel.title}\nUID: ${currentLevel.id}\nEfficiency: ${efficiency}%\nMoves: ${actualMoves} (Min: ${minMoves})\n\n${visual}\nhttps://fifthrace.github.io/zenlogic/`;
-            navigator.clipboard.writeText(text);
-            const btn = document.getElementById('share-btn');
-            const originalText = btn.innerText;
-            btn.innerText = "Copied to Clipboard!";
-            setTimeout(() => btn.innerText = originalText, 2000);
+
+            const text = `Proximal: ${currentLevel.title}\nUID: ${uid}\nMoves: ${moves}\n${status}\n\n${url}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Proximal Mapping',
+                    text: text,
+                    url: url
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert("Mapping copied to clipboard!");
+                });
+            }
         }
 
         function resetGame() {
             if (!currentLevel) return;
-            if (confirm("Reset this board?")) {
+            if (confirm("Clear this map?")) {
                 history = [];
-                moveLog = [];
                 state = Array(currentLevel.height).fill().map(() => Array(currentLevel.width).fill(0));
                 clearInProgress(currentLevel.id);
                 updateUI();
@@ -651,22 +576,24 @@
             setTimeout(() => el.innerText = oldText, 1000);
         }
 
+        // Boot
         async function boot() {
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration failed:', err));
-                });
-            }
             await fetchManifest();
+            
             window.onpopstate = () => {
                 const urlParams = new URLSearchParams(window.location.search);
                 loadLevel(urlParams.get('level'));
             };
+            
             const urlParams = new URLSearchParams(window.location.search);
             const initialLevel = urlParams.get('level');
-            if (initialLevel) loadLevel(initialLevel);
-            else showMenu();
+            if (initialLevel) {
+                loadLevel(initialLevel);
+            } else {
+                showMenu();
+            }
         }
+        
         boot();
     </script>
 </body>
