@@ -1,17 +1,36 @@
-const CACHE_NAME = 'zen-logic-v1';
+const CACHE_NAME = 'proxima8-v2';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './manifest.webmanifest',
+  './assets/icon-192.png',
+  './assets/icon-512.png',
   'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js'
 ];
 
+// Force immediate activation
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
     })
+  );
+});
+
+// Clear out old Zen Logic caches
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
   );
 });
 
