@@ -1,11 +1,11 @@
 {
-  "name": "Zen Logic",
-  "short_name": "ZenLogic",
+  "name": "Proxima 8",
+  "short_name": "Proxima 8",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f0f2f5",
-  "theme_color": "#4dabf7",
-  "description": "A spatial logic puzzle game of clarity and focus.",
+  "background_color": "#f8f9fa",
+  "theme_color": "#343a40",
+  "description": "Map the hidden neural patterns in this pure logic challenge.",
   "icons": [
     {
       "src": "assets/icon-192.png",
