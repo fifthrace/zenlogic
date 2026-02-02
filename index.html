@@ -156,19 +156,23 @@
             padding-bottom: 10px;
         }
         
-        #settings-toggle { 
-            cursor: pointer; 
-            font-size: 20px; 
-            position: absolute; 
-            top: 20px; 
-            right: 20px; 
-            opacity: 0.4; 
-            transition: opacity 0.2s; 
+        #top-right-nav {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .icon-btn {
+            cursor: pointer;
+            opacity: 0.4;
+            transition: opacity 0.2s;
             user-select: none;
             color: #333;
-            filter: grayscale(100%);
+            font-weight: bold;
         }
-        #settings-toggle:hover { opacity: 1; }
+        .icon-btn:hover { opacity: 1; }
         
         #settings-panel, #how-to-play-panel {
             display: none;
@@ -208,13 +212,15 @@
     <h1 id="main-header">Zen Logic</h1>
 
     <div id="controls-row">
-        <span id="back-btn" class="text-btn" onclick="showMenu()" style="display: none;">← Back</span>
-        <span id="undo-btn" class="text-btn" onclick="undoMove()" style="display: none;">↩ Undo</span>
-        <span id="reset-btn" class="text-btn" onclick="resetGame()" style="display: none;">↺ Reset</span>
-        <span id="help-btn" class="text-btn" onclick="toggleHelp()">? Rules</span>
+        <span id="back-btn" class="text-btn" onclick="showMenu()">← Back</span>
+        <span id="undo-btn" class="text-btn" onclick="undoMove()">↩ Undo</span>
+        <span id="reset-btn" class="text-btn" onclick="resetGame()">↺ Reset</span>
     </div>
     
-    <div id="settings-toggle" onclick="toggleSettings()" title="Settings">⚙</div>
+    <div id="top-right-nav">
+        <div id="help-toggle" class="icon-btn" style="font-size: 24px;" onclick="toggleHelp()" title="Rules">?</div>
+        <div id="settings-toggle" class="icon-btn" style="font-size: 20px;" onclick="toggleSettings()" title="Settings">⚙</div>
+    </div>
 
     <div id="settings-panel">
         <h3>Settings</h3>
@@ -304,9 +310,7 @@
                     if (data.inProgress) localStorage.setItem('zen_in_progress', JSON.stringify(data.inProgress));
                     alert("Progress imported successfully!");
                     location.reload();
-                } catch (err) {
-                    alert("Failed to import data.");
-                }
+                } catch (err) { alert("Failed to import data."); }
             };
             reader.readAsText(file);
         }
@@ -424,9 +428,9 @@
             if (!levelData || !levelData.clues) return showMenu();
             currentLevel = levelData;
             document.getElementById('main-header').innerText = currentLevel.title;
-            document.getElementById('back-btn').style.display = 'flex';
-            document.getElementById('undo-btn').style.display = 'flex';
-            document.getElementById('reset-btn').style.display = 'flex';
+            document.getElementById('back-btn').style.display = 'inline';
+            document.getElementById('undo-btn').style.display = 'inline';
+            document.getElementById('reset-btn').style.display = 'inline';
             const saved = getInProgress(key);
             state = saved ? saved : Array(currentLevel.height).fill().map(() => Array(currentLevel.width).fill(0));
             history = [];
