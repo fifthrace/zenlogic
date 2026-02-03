@@ -21,7 +21,7 @@
     "alias": "android"
   },
   "appVersionName": "Y",
-  "appVersionCode": 4,
+  "appVersionCode": 5,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://proxima8.bajo.io/manifest.json",
