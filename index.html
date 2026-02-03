@@ -251,6 +251,7 @@
         <div id="grid"></div>
         <div id="status">Map the proximities</div>
         <div id="share-controls" style="margin-top: 15px; display: none; gap: 10px;">
+            <button id="next-btn" onclick="goToNextLevel()" style="padding: 8px 16px; border-radius: 20px; border: 1px solid #40c057; background: #40c057; color: white; cursor: pointer; font-weight: 600;">Next Neural Link</button>
             <button onclick="shareResult()" style="padding: 8px 16px; border-radius: 20px; border: 1px solid #4dabf7; background: white; color: #4dabf7; cursor: pointer; font-weight: 600;">Share Mapping</button>
         </div>
         <div id="level-id-display" onclick="copyUID()" style="cursor: pointer; font-size: 10px; color: #ccc; margin-top: 10px; font-family: monospace;" title="Click to copy UID"></div>
@@ -282,9 +283,7 @@
         }
 
         let levelManifest = [];
-        const levelsCache = {
-            "tutorial": { "id": "tutorial", "title": "Calibration", "display": "3x3", "width": 3, "height": 3, "clues": [[2, 2, 1], [2, 2, 2], [3, 2, 2]], "difficulty": "easy", "targetActive": 3 }
-        };
+        const levelsCache = {};
 
         let currentLevel = null;
         let state = [];
@@ -361,8 +360,7 @@
 
             categories.forEach(cat => {
                 const filtered = levelManifest.filter(cat.filter);
-                // Also add tutorial to training if manifest is empty or missing it
-                const allInCat = cat.name.includes('3x3') ? [levelsCache.tutorial, ...filtered] : filtered;
+                const allInCat = filtered;
 
                 if (allInCat.length > 0) {
                     const header = document.createElement('h2');
@@ -430,6 +428,7 @@
             document.getElementById('game-view').style.display = 'flex';
             document.getElementById('level-id-display').innerText = `UID: ${key}`;
             document.getElementById('status').innerText = "Map the proximities";
+            if (document.getElementById('next-btn')) document.getElementById('next-btn').style.display = 'none';
             
             createGrid();
             updateUI();
@@ -544,6 +543,13 @@
                     }
                 }
                 markCompleted(currentLevel.id);
+                
+                // Show/Hide Next button
+                const currentIndex = levelManifest.findIndex(l => l.id === currentLevel.id);
+                const nextBtn = document.getElementById('next-btn');
+                if (nextBtn) {
+                    nextBtn.style.display = (currentIndex !== -1 && currentIndex < levelManifest.length - 1) ? 'block' : 'none';
+                }
             } else if (!silent) {
                 document.getElementById('status').innerText = "Map the proximities";
             } else if (silent && solved && totalActive === 0) {
@@ -579,6 +585,16 @@
                 navigator.clipboard.writeText(text).then(() => {
                     alert("Mapping copied to clipboard!");
                 });
+            }
+        }
+
+        function goToNextLevel() {
+            if (!currentLevel) return showMenu();
+            const currentIndex = levelManifest.findIndex(l => l.id === currentLevel.id);
+            if (currentIndex !== -1 && currentIndex < levelManifest.length - 1) {
+                loadLevel(levelManifest[currentIndex + 1].id);
+            } else {
+                showMenu();
             }
         }
 
