@@ -1,7 +1,7 @@
 {
   "name": "Proxima 8",
   "short_name": "Proxima 8",
-  "start_url": "/proxima8/",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#f8f9fa",
   "theme_color": "#4dabf7",
