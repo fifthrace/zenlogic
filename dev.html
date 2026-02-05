@@ -381,6 +381,9 @@
         function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
 
         function zoomTo(x, y, name, color) {
+            // Push state so browser back button works
+            window.history.pushState({view: 'system', sector: name}, '', `?sector=${name.replace(/ /g, '_')}`);
+            
             const isLandscape = window.innerWidth > window.innerHeight;
             document.body.style.setProperty('--zoom-x', (isLandscape ? x*0.8 : x) + '%');
             document.body.style.setProperty('--zoom-y', (isLandscape ? y*0.5 : y) + '%');
@@ -427,6 +430,14 @@
         }
 
         function zoomOut() {
+            if (window.history.state && window.history.state.view === 'system') {
+                window.history.back();
+            } else {
+                performZoomOut();
+            }
+        }
+
+        function performZoomOut() {
             document.body.classList.remove('zoomed');
             document.getElementById('back-to-galaxy').style.display = 'none';
             updateSectorStatus();
@@ -735,7 +746,15 @@
             });
         }
 
+        function onPopState(event) {
+            performExitGame();
+            if (!event.state || event.state.view !== 'system') {
+                performZoomOut();
+            }
+        }
+
         async function init() {
+            window.addEventListener('popstate', onPopState);
             const res = await fetch('level_manifest.json');
             levelManifest = await res.json();
             updateSectorStatus();
