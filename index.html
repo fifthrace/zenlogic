@@ -316,6 +316,12 @@
                 <span id="theme-dark" class="theme-btn" onclick="setTheme('dark')" title="Dark Mode">🌙</span>
             </div>
         </div>
+        <div style="margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+            <div style="font-size: 10px; color: #888; margin-bottom: 8px; text-align: center; letter-spacing: 1px;">DATA MANAGEMENT</div>
+            <button onclick="exportData()" style="background: #4dabf7; color: white; margin-bottom: 8px;">Export Progress</button>
+            <button onclick="document.getElementById('import-file').click()" style="background: #4dabf7; color: white;">Import Progress</button>
+            <input type="file" id="import-file" style="display: none" accept=".json" onchange="importData(event)">
+        </div>
         <button onclick="toggleSettings()" style="background: var(--cell-bg); color: var(--text-color);">Close</button>
     </div>
 
@@ -390,9 +396,44 @@
             if (confirm("Reset all neural mapping?")) {
                 localStorage.removeItem('zen_completed');
                 localStorage.removeItem('zen_in_progress');
+                localStorage.removeItem('proxima_states');
                 toggleSettings();
                 showMenu();
             }
+        }
+
+        function exportData() {
+            const data = {
+                completed: getCompleted(),
+                inProgress: JSON.parse(localStorage.getItem('zen_in_progress') || '{}'),
+                states: JSON.parse(localStorage.getItem('proxima_states') || '{}'),
+                version: 1,
+                timestamp: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `proxima_save_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.completed) localStorage.setItem('zen_completed', JSON.stringify(data.completed));
+                    if (data.inProgress) localStorage.setItem('zen_in_progress', JSON.stringify(data.inProgress));
+                    if (data.states) localStorage.setItem('proxima_states', JSON.stringify(data.states));
+                    alert("Progress imported successfully!");
+                    location.reload();
+                } catch (err) { alert("Failed to import data."); }
+            };
+            reader.readAsText(file);
         }
 
         let levelManifest = [];
