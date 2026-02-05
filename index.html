@@ -74,6 +74,12 @@
             box-shadow: 0 2px 8px rgba(77, 171, 247, 0.4);
             background-clip: content-box;
         }
+        .cell.override {
+            background-color: #fab005 !important;
+            color: white !important;
+            box-shadow: 0 0 15px rgba(250, 176, 5, 0.6);
+            background-clip: padding-box !important;
+        }
         .cell.correct {
             border-color: #40c057;
             box-shadow: inset 0 0 10px rgba(64, 192, 87, 0.5);
@@ -250,9 +256,12 @@
     <div id="game-view" style="display: none; flex-direction: column; align-items: center;">
         <div id="grid"></div>
         <div id="status">Map the proximities</div>
-        <div id="share-controls" style="margin-top: 15px; display: none; gap: 10px;">
-            <button id="next-btn" onclick="goToNextLevel()" style="padding: 8px 16px; border-radius: 20px; border: 1px solid #40c057; background: #40c057; color: white; cursor: pointer; font-weight: 600;">Next Neural Link</button>
-            <button onclick="shareResult()" style="padding: 8px 16px; border-radius: 20px; border: 1px solid #4dabf7; background: white; color: #4dabf7; cursor: pointer; font-weight: 600;">Share Mapping</button>
+        <div id="action-row" style="margin-top: 15px; display: flex; gap: 10px;">
+            <div id="share-controls" style="display: none; gap: 10px;">
+                <button id="next-btn" onclick="goToNextLevel()" style="padding: 8px 16px; border-radius: 20px; border: 1px solid #40c057; background: #40c057; color: white; cursor: pointer; font-weight: 600;">Next Neural Link</button>
+                <button onclick="shareResult()" style="padding: 8px 16px; border-radius: 20px; border: 1px solid #4dabf7; background: white; color: #4dabf7; cursor: pointer; font-weight: 600;">Share Mapping</button>
+            </div>
+            <button id="override-btn" onclick="requestOverride()" style="padding: 8px 16px; border-radius: 20px; border: 1px solid #fab005; background: white; color: #fab005; cursor: pointer; font-weight: 600;">Neural Override (∞)</button>
         </div>
         <div id="level-id-display" onclick="copyUID()" style="cursor: pointer; font-size: 10px; color: #ccc; margin-top: 10px; font-family: monospace;" title="Click to copy UID"></div>
     </div>
@@ -288,6 +297,7 @@
         let currentLevel = null;
         let state = [];
         let history = [];
+        let overridePending = [];
 
         async function fetchManifest() {
             try {
@@ -340,6 +350,8 @@
             clearInProgress(id);
             const controls = document.getElementById('share-controls');
             if (controls) controls.style.display = 'flex';
+            const overrideBtn = document.getElementById('override-btn');
+            if (overrideBtn) overrideBtn.style.display = 'none';
         }
 
         function showMenu() {
@@ -442,6 +454,8 @@
             
             if (document.getElementById('share-controls')) document.getElementById('share-controls').style.display = 'none';
             if (document.getElementById('next-btn')) document.getElementById('next-btn').style.display = 'none';
+            if (document.getElementById('override-btn')) document.getElementById('override-btn').style.display = 'block';
+            overridePending = [];
             
             createGrid();
             updateUI();
@@ -478,6 +492,10 @@
             history.push(JSON.stringify(state));
             if (history.length > 50) history.shift();
             state[y][x] = state[y][x] === 0 ? 1 : 0;
+            
+            // Clear override if this cell was highlighted
+            overridePending = overridePending.filter(p => p.x !== x || p.y !== y);
+            
             saveInProgress(currentLevel.id, state);
             updateUI();
             checkWin();
@@ -499,6 +517,11 @@
                     if (!cell) continue;
                     if (state[y][x] === 1) cell.classList.add('active');
                     else cell.classList.remove('active');
+
+                    // Apply persistent override highlight
+                    const isOverridden = overridePending.some(p => p.x === x && p.y === y);
+                    if (isOverridden) cell.classList.add('override');
+                    else cell.classList.remove('override');
                 }
             }
         }
@@ -568,6 +591,33 @@
             } else if (silent && solved && totalActive === 0) {
                  document.getElementById('status').innerText = "Map the proximities";
             }
+        }
+
+        function requestOverride() {
+            if (!currentLevel || !currentLevel.solution) return;
+            
+            // Find all cells that are currently WRONG compared to the solution
+            // AND not already currently highlighted by a previous override
+            const incorrectCells = [];
+            for (let y = 0; y < currentLevel.height; y++) {
+                for (let x = 0; x < currentLevel.width; x++) {
+                    const alreadyHighlighted = overridePending.some(p => p.x === x && p.y === y);
+                    if (state[y][x] !== currentLevel.solution[y][x] && !alreadyHighlighted) {
+                        incorrectCells.push({x, y});
+                    }
+                }
+            }
+
+            if (incorrectCells.length === 0) return;
+
+            // Pick up to 3 random incorrect cells
+            const count = Math.min(3, incorrectCells.length);
+            for (let i = 0; i < count; i++) {
+                const idx = Math.floor(Math.random() * incorrectCells.length);
+                overridePending.push(incorrectCells.splice(idx, 1)[0]);
+            }
+
+            updateUI();
         }
 
         function shareResult() {
