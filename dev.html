@@ -566,15 +566,8 @@
 
         async function init() {
             const res = await fetch('level_manifest.json');
-            const allLevels = await res.json();
-            
-            // Only use the top ~91 levels for production-feel (13 per sector)
-            // The others are kept in the levels/ folder for difficulty testing
-            levelManifest = allLevels.slice(0, 91);
-            
-            levelManifest.forEach((l, i) => {
-                l.sector = sectorNames[i % sectorNames.length];
-            });
+            levelManifest = await res.json();
+            // Sector assignment is now handled in the manifest itself by the script
         }
 
         init();
