@@ -40,6 +40,18 @@
         }
         .text-btn:hover { color: #333; opacity: 1; }
         
+        #next-nav-btn.glow {
+            opacity: 1;
+            color: #fab005;
+            text-shadow: 0 0 8px rgba(250, 176, 5, 0.6);
+            animation: pulse-glow 2s infinite;
+        }
+        @keyframes pulse-glow {
+            0% { text-shadow: 0 0 5px rgba(250, 176, 5, 0.4); }
+            50% { text-shadow: 0 0 20px rgba(250, 176, 5, 0.8); }
+            100% { text-shadow: 0 0 5px rgba(250, 176, 5, 0.4); }
+        }
+        
         #grid {
             display: grid;
             grid-gap: 10px;
@@ -259,7 +271,6 @@
         <div id="status">Map the proximities</div>
         <div id="action-row" style="margin-top: 15px; display: flex; gap: 10px;">
             <div id="share-controls" style="display: none; gap: 10px;">
-                <button id="next-btn" onclick="goToNextLevel()" style="padding: 8px 16px; border-radius: 20px; border: 1px solid #40c057; background: #40c057; color: white; cursor: pointer; font-weight: 600;">Next Neural Link</button>
                 <button onclick="shareResult()" style="padding: 8px 16px; border-radius: 20px; border: 1px solid #4dabf7; background: white; color: #4dabf7; cursor: pointer; font-weight: 600;">Share Mapping</button>
             </div>
             <button id="override-btn" onclick="requestOverride()" style="padding: 8px 16px; border-radius: 20px; border: 1px solid #fab005; background: white; color: #fab005; cursor: pointer; font-weight: 600;">Neural Override (∞)</button>
@@ -353,6 +364,10 @@
             if (controls) controls.style.display = 'flex';
             const overrideBtn = document.getElementById('override-btn');
             if (overrideBtn) overrideBtn.style.display = 'none';
+            
+            // Add yellow glow to the Next button
+            const nextBtn = document.getElementById('next-nav-btn');
+            if (nextBtn) nextBtn.classList.add('glow');
         }
 
         function showMenu() {
@@ -462,7 +477,10 @@
             document.getElementById('status').innerText = "Map the proximities";
             
             if (document.getElementById('share-controls')) document.getElementById('share-controls').style.display = 'none';
-            if (document.getElementById('next-btn')) document.getElementById('next-btn').style.display = 'none';
+            if (document.getElementById('next-nav-btn')) {
+                document.getElementById('next-nav-btn').classList.remove('glow');
+                document.getElementById('next-nav-btn').style.display = (currentIndex !== -1 && currentIndex < levelManifest.length - 1) ? 'flex' : 'none';
+            }
             if (document.getElementById('override-btn')) document.getElementById('override-btn').style.display = 'block';
             overridePending = [];
             
@@ -588,13 +606,6 @@
                     }
                 }
                 markCompleted(currentLevel.id);
-                
-                // Show/Hide Next button
-                const currentIndex = levelManifest.findIndex(l => l.id === currentLevel.id);
-                const nextBtn = document.getElementById('next-btn');
-                if (nextBtn) {
-                    nextBtn.style.display = (currentIndex !== -1 && currentIndex < levelManifest.length - 1) ? 'block' : 'none';
-                }
             } else if (!silent) {
                 document.getElementById('status').innerText = "Map the proximities";
             } else if (silent && solved && totalActive === 0) {
