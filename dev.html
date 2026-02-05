@@ -549,14 +549,17 @@
         function exitGame() { document.getElementById('game-overlay').style.display = 'none'; }
 
         function goToNext() {
+            if (!currentLevel || !levelManifest.length) return;
             const sectorLevels = levelManifest.filter(l => l.sector === currentLevel.sector);
+            if (!sectorLevels.length) return;
+            
             const localIdx = sectorLevels.findIndex(l => l.id === currentLevel.id);
             
             if (localIdx !== -1 && localIdx < sectorLevels.length - 1) {
                 // Go to next planet in THIS sector
                 loadLevel(sectorLevels[localIdx + 1].id);
             } else {
-                // We are on the 13th planet, loop back to the 1st
+                // We are on the last planet of sector, loop back to the 1st
                 loadLevel(sectorLevels[0].id);
             }
         }
