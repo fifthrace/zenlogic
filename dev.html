@@ -200,17 +200,17 @@
         }
         .cell {
             --vw-unit: min(100vw, 500px);
-            --paddings: 40px;
-            --gaps: calc(10px * (var(--grid-width, 8) - 1));
+            --paddings: 60px;
+            --gaps: calc(12px * (var(--grid-width, 8) - 1));
             --cell-w: calc((var(--vw-unit) - var(--paddings) - var(--gaps)) / var(--grid-width, 8));
             
-            width: min(var(--cell-w), 60px);
-            height: min(var(--cell-w), 60px);
+            width: min(var(--cell-w), 50px);
+            height: min(var(--cell-w), 50px);
             aspect-ratio: 1 / 1; border-radius: 8px; display: flex; align-items: center; justify-content: center;
             font-weight: bold; cursor: pointer; transition: all 0.2s ease;
             background-color: var(--cell-bg); border: 4px solid transparent;
             user-select: none; background-clip: padding-box; padding: 4px; color: var(--text-color);
-            font-size: clamp(10px, 4vw, 18px);
+            font-size: clamp(9px, 3.5vw, 16px);
         }
         .cell.active { background-color: var(--accent-blue) !important; color: white !important; box-shadow: 0 2px 8px rgba(77, 171, 247, 0.4); background-clip: content-box; }
         .cell.correct { border-color: var(--accent-green); box-shadow: inset 0 0 10px rgba(64, 192, 87, 0.5); }
