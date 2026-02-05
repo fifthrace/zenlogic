@@ -342,11 +342,27 @@
             For eons, the Proxima expanse was connected by vast sub-space beacons. Then, the Great Static hit, plunging the systems into darkness. As a Pilot of the Reclamation Fleet, you must travel from system to system, identifying original coordinate patterns to stabilize the network.
         </p>
         
-        <p><strong>Protocol:</strong> Match the Spatial Proximity Profile of each node.</p>
-        <ul style="padding-left: 20px; margin-bottom: 20px;">
-            <li><span style="color: var(--accent-yellow); font-weight: bold;">Sensors:</span> Numbers indicate exactly how many active energy nodes are in the 8-cell neighborhood.</li>
-            <li><span style="color: var(--accent-blue); font-weight: bold;">Input:</span> Click cells to activate or deactivate nodes.</li>
-            <li><span style="color: var(--accent-green); font-weight: bold;">Feedback:</span> Green means satisfied. Red is over-saturated. Grey is under-saturated.</li>
+        <ul style="padding-left: 0; list-style: none; margin-bottom: 20px;">
+            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <div style="width: 20px; height: 20px; background: var(--accent-yellow); border-radius: 4px; flex-shrink: 0;"></div>
+                <span><strong>Sensors:</strong> Active energy nodes in the 8-cell neighborhood.</span>
+            </li>
+            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <div style="width: 20px; height: 20px; background: var(--accent-blue); border-radius: 4px; flex-shrink: 0;"></div>
+                <span><strong>Input:</strong> Toggle node activation states.</span>
+            </li>
+            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <div style="width: 20px; height: 20px; border: 2px solid var(--accent-green); border-radius: 4px; flex-shrink: 0;"></div>
+                <span><strong>Satisfied:</strong> Target proximity achieved.</span>
+            </li>
+            <li style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <div style="width: 20px; height: 20px; border: 2px solid #fa5252; border-radius: 4px; flex-shrink: 0;"></div>
+                <span><strong>Over-saturated:</strong> Presence exceeds parameters.</span>
+            </li>
+            <li style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 20px; height: 20px; border: 2px solid #888; border-radius: 4px; flex-shrink: 0;"></div>
+                <span><strong>Under-saturated:</strong> Additional presence required.</span>
+            </li>
         </ul>
         
         <p style="font-size: 12px; opacity: 0.7;">Stabilizing all nodes in a sector will clear the static and lock the trajectory, allowing for deeper exploration.</p>
