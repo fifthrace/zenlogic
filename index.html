@@ -54,17 +54,18 @@
         
         #grid {
             display: grid;
-            grid-gap: 10px;
+            grid-gap: var(--grid-gap, 10px);
             background: #fff;
-            padding: 20px;
+            padding: min(4vw, 20px);
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            max-width: 95vw;
-            overflow: auto;
+            width: 95vw;
+            max-width: 500px;
+            box-sizing: border-box;
         }
         .cell {
-            width: 50px;
-            height: 50px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -492,20 +493,19 @@
         function createGrid() {
             if (!currentLevel || !currentLevel.clues) return;
             const gridEl = document.getElementById('grid');
-            const cellSize = currentLevel.width > 10 ? '35px' : '50px';
-            const fontSize = currentLevel.width > 10 ? '14px' : '18px';
-            const gap = currentLevel.width > 10 ? '5px' : '10px';
             
-            gridEl.style.gridGap = gap;
-            gridEl.style.gridTemplateColumns = `repeat(${currentLevel.width}, ${cellSize})`;
+            // Scalable grid sizing
+            const gap = currentLevel.width > 8 ? 5 : 10;
+            const fontSize = currentLevel.width > 10 ? '14px' : (currentLevel.width > 5 ? '16px' : '20px');
+            
+            gridEl.style.setProperty('--grid-gap', gap + 'px');
+            gridEl.style.gridTemplateColumns = `repeat(${currentLevel.width}, 1fr)`;
             gridEl.innerHTML = '';
             
             for (let y = 0; y < currentLevel.height; y++) {
                 for (let x = 0; x < currentLevel.width; x++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    cell.style.width = cellSize;
-                    cell.style.height = cellSize;
                     cell.style.fontSize = fontSize;
                     cell.id = `cell-${x}-${y}`;
                     cell.innerText = currentLevel.clues[y][x];
