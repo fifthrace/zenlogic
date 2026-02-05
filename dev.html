@@ -550,17 +550,29 @@
 
         function goToNext() {
             if (!currentLevel || !levelManifest.length) return;
-            const sectorLevels = levelManifest.filter(l => l.sector === currentLevel.sector);
-            if (!sectorLevels.length) return;
             
+            // 1. Get ALL levels in the current sector in their manifest order
+            const sectorLevels = levelManifest.filter(l => l.sector === currentLevel.sector);
+            if (!sectorLevels.length) {
+                console.error("Sector data missing for", currentLevel.sector);
+                exitGame();
+                return;
+            }
+            
+            // 2. Find where we are in that 1-13 sequence
             const localIdx = sectorLevels.findIndex(l => l.id === currentLevel.id);
+            console.log(`Current: ${currentLevel.id} (Index: ${localIdx} of ${sectorLevels.length})`);
             
             if (localIdx !== -1 && localIdx < sectorLevels.length - 1) {
-                // Go to next planet in THIS sector
-                loadLevel(sectorLevels[localIdx + 1].id);
+                // 3. Progress to the next ID in the JSON table
+                const nextId = sectorLevels[localIdx + 1].id;
+                console.log("Jumping to next node:", nextId);
+                loadLevel(nextId);
             } else {
-                // We are on the last planet of sector, loop back to the 1st
-                loadLevel(sectorLevels[0].id);
+                // 4. We are on the 13th planet, loop back to the 1st
+                const firstId = sectorLevels[0].id;
+                console.log("Looping sector back to start:", firstId);
+                loadLevel(firstId);
             }
         }
 
