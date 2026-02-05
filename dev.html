@@ -408,10 +408,19 @@
             document.getElementById('game-header').innerText = data.name;
             document.getElementById('game-overlay').style.display = 'flex';
             document.getElementById('share-btn').style.display = completed.includes(id) ? 'block' : 'none';
-            document.getElementById('next-btn').style.display = completed.includes(id) ? 'block' : 'none';
-            if (completed.includes(id)) document.getElementById('next-btn').classList.add('glow');
-            else document.getElementById('next-btn').classList.remove('glow');
-            document.getElementById('override-btn').style.display = completed.includes(id) ? 'none' : 'block';
+            
+            // Persistent Next button since levels aren't locked
+            const idx = levelManifest.findIndex(l => l.id === id);
+            const hasNext = (idx !== -1 && idx < levelManifest.length - 1);
+            document.getElementById('next-btn').style.display = hasNext ? 'block' : 'none';
+            
+            if (completed.includes(id)) {
+                document.getElementById('next-btn').classList.add('glow');
+                document.getElementById('override-btn').style.display = 'none';
+            } else {
+                document.getElementById('next-btn').classList.remove('glow');
+                document.getElementById('override-btn').style.display = 'block';
+            }
             
             createGrid();
             updateUI();
