@@ -356,6 +356,18 @@
 
     <div id="settings-panel" onclick="event.stopPropagation()">
         <h3 style="margin-top: 0; font-weight: 300; letter-spacing: 1px;">SYSTEM SETTINGS</h3>
+        
+        <div id="sync-status" style="margin-bottom: 20px; font-size: 12px; border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span style="opacity: 0.7;">Offline Sync:</span>
+                <span id="sync-percent" style="font-weight: bold; color: var(--accent-blue);">Initializing...</span>
+            </div>
+            <div style="width: 100%; height: 4px; background: var(--cell-bg); border-radius: 2px; overflow: hidden;">
+                <div id="sync-bar" style="width: 0%; height: 100%; background: var(--accent-blue); transition: width 0.3s;"></div>
+            </div>
+            <div id="sync-label" style="font-size: 10px; opacity: 0.5; margin-top: 5px; text-transform: uppercase;">Warming up sub-space links...</div>
+        </div>
+
         <button onclick="exportData()">Export Data</button>
         <button onclick="document.getElementById('import-file').click()">Import Data</button>
         <input type="file" id="import-file" style="display: none" accept=".json" onchange="importData(event)">
@@ -745,6 +757,27 @@
 
         async function init() {
             window.addEventListener('popstate', onPopState);
+
+            // Service Worker progress listener
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.addEventListener('message', (event) => {
+                    if (event.data && event.data.type === 'CACHE_PROGRESS') {
+                        const { current, total } = event.data;
+                        const percent = Math.round((current / total) * 100);
+                        document.getElementById('sync-percent').innerText = percent === 100 ? "Ready" : `${percent}%`;
+                        document.getElementById('sync-bar').style.width = `${percent}%`;
+                        document.getElementById('sync-label').innerText = percent === 100 ? 
+                            "All sectors archived for offline play." : 
+                            `Archiving sector data (${current}/${total})...`;
+                        
+                        if (percent === 100) {
+                            document.getElementById('sync-percent').style.color = 'var(--accent-green)';
+                            document.getElementById('sync-bar').style.background = 'var(--accent-green)';
+                        }
+                    }
+                });
+            }
+
             const res = await fetch('level_manifest.json');
             levelManifest = await res.json();
             updateSectorStatus();
