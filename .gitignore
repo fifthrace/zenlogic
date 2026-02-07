@@ -11,3 +11,4 @@ app/build/
 *.jks
 twa-manifest.json
 local.properties
+archive/

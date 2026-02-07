@@ -44,7 +44,7 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s;
             transform-style: preserve-3d;
         }
 
@@ -107,21 +107,21 @@
 
         /* Uniform Orbital Layout - Alpha in center, 6 in a ring */
         #sector-alpha    { top: 50%; left: 50%; transform: translate(-50%, -50%); } 
-        #sector-void     { top: 20%; left: 50%; transform: translate(-50%, -50%); }
+        #sector-crimson  { top: 20%; left: 50%; transform: translate(-50%, -50%); }
         #sector-azure    { top: 35%; left: 80%; transform: translate(-50%, -50%); }
         #sector-obsidian { top: 65%; left: 80%; transform: translate(-50%, -50%); }
         #sector-emerald  { top: 80%; left: 50%; transform: translate(-50%, -50%); }
-        #sector-solar    { top: 65%; left: 20%; transform: translate(-50%, -50%); }
-        #sector-neutron  { top: 35%; left: 20%; transform: translate(-50%, -50%); }
+        #sector-amber    { top: 65%; left: 20%; transform: translate(-50%, -50%); }
+        #sector-indigo   { top: 35%; left: 20%; transform: translate(-50%, -50%); }
 
         @media (max-width: 600px) {
             #sector-alpha    { top: 50%; left: 50%; }
-            #sector-void     { top: 25%; left: 50%; }
+            #sector-crimson  { top: 25%; left: 50%; }
             #sector-azure    { top: 37%; left: 82%; }
             #sector-obsidian { top: 63%; left: 82%; }
             #sector-emerald  { top: 75%; left: 50%; }
-            #sector-solar    { top: 63%; left: 18%; }
-            #sector-neutron  { top: 37%; left: 18%; }
+            #sector-amber    { top: 63%; left: 18%; }
+            #sector-indigo   { top: 37%; left: 18%; }
         }
 
         #system-view {
@@ -246,6 +246,7 @@
 
         #settings-panel { display: none; position: absolute; top: 70px; right: 30px; background: var(--panel-bg); padding: 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 3000; width: 220px; }
         #settings-panel button { width: 100%; margin-top: 10px; padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; background: var(--accent-blue); color: white; }
+        #offline-status { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.5; margin-top: 15px; text-align: center; }
 
         #modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 4000; align-items: center; justify-content: center; }
         #modal { background: var(--panel-bg); padding: 30px; border-radius: 20px; width: 90%; max-width: 320px; text-align: center; }
@@ -259,10 +260,10 @@
     <div id="viewport" onclick="closeAllPanels()">
         <div id="universe">
             <div id="sector-alpha" class="cluster" onclick="zoomTo(0, 0, 'Alpha Sector', '#fab005')">
-                <div class="cluster-core"></div>
+                <div class="cluster-core" style="background: #fab005;"></div>
                 <div class="cluster-label"><span class="cluster-name">Alpha Sector</span><span id="status-Alpha-Sector" class="cluster-status"></span></div>
             </div>
-            <div id="sector-void" class="cluster" onclick="zoomTo(-13, 18, 'Crimson Void', '#fa5252')">
+            <div id="sector-crimson" class="cluster" onclick="zoomTo(-13, 18, 'Crimson Void', '#fa5252')">
                 <div class="cluster-core" style="background: #fa5252;"></div>
                 <div class="cluster-label"><span class="cluster-name">Crimson Void</span><span id="status-Crimson-Void" class="cluster-status"></span></div>
             </div>
@@ -270,21 +271,21 @@
                 <div class="cluster-core" style="background: #1c7ed6;"></div>
                 <div class="cluster-label"><span class="cluster-name">Azure Reach</span><span id="status-Azure-Reach" class="cluster-status"></span></div>
             </div>
-            <div id="sector-obsidian" class="cluster" onclick="zoomTo(28, 15, 'Obsidian Gate', '#862e9c')">
-                <div class="cluster-core" style="background: #862e9c;"></div>
+            <div id="sector-obsidian" class="cluster" onclick="zoomTo(28, 15, 'Obsidian Gate', '#212529')">
+                <div class="cluster-core" style="background: #212529;"></div>
                 <div class="cluster-label"><span class="cluster-name">Obsidian Gate</span><span id="status-Obsidian-Gate" class="cluster-status"></span></div>
             </div>
             <div id="sector-emerald" class="cluster" onclick="zoomTo(25, -12, 'Emerald Nebula', '#40c057')">
                 <div class="cluster-core" style="background: #40c057;"></div>
                 <div class="cluster-label"><span class="cluster-name">Emerald Nebula</span><span id="status-Emerald-Nebula" class="cluster-status"></span></div>
             </div>
-            <div id="sector-solar" class="cluster" onclick="zoomTo(-2, -33, 'Solar Forge', '#fd7e14')">
+            <div id="sector-amber" class="cluster" onclick="zoomTo(-2, -33, 'Amber Vault', '#fd7e14')">
                 <div class="cluster-core" style="background: #fd7e14;"></div>
-                <div class="cluster-label"><span class="cluster-name">Solar Forge</span><span id="status-Solar-Forge" class="cluster-status"></span></div>
+                <div class="cluster-label"><span class="cluster-name">Amber Vault</span><span id="status-Amber-Vault" class="cluster-status"></span></div>
             </div>
-            <div id="sector-neutron" class="cluster" onclick="zoomTo(-33, -20, 'Neutron Star', '#e9ecef')">
-                <div class="cluster-core" style="background: #e9ecef;"></div>
-                <div class="cluster-label"><span class="cluster-name">Neutron Star</span><span id="status-Neutron-Star" class="cluster-status"></span></div>
+            <div id="sector-indigo" class="cluster" onclick="zoomTo(-33, -20, 'Indigo Drift', '#7048e8')">
+                <div class="cluster-core" style="background: #7048e8;"></div>
+                <div class="cluster-label"><span class="cluster-name">Indigo Drift</span><span id="status-Indigo-Drift" class="cluster-status"></span></div>
             </div>
         </div>
 
@@ -304,7 +305,7 @@
         <div id="settings-toggle-game" style="position: absolute; top: 30px; right: 30px; cursor: pointer; font-size: 20px; opacity: 0.4;" onclick="event.stopPropagation(); toggleSettings()">⚙</div>
         
         <div style="display: flex; gap: 20px; margin-bottom: 20px; margin-top: 20px;" onclick="event.stopPropagation()">
-            <span class="text-btn" onclick="exitGame()">← <span class="btn-text">Back</span></span>
+            <span class="text-btn" onclick="exitGame()">← <span class="btn-text">Exit</span></span>
             <span class="text-btn" onclick="undoMove()">↩ <span class="btn-text">Undo</span></span>
             <span class="text-btn" onclick="resetGame()">↺ <span class="btn-text">Clear</span></span>
             <span id="next-btn" class="text-btn" style="display:none;" onclick="goToNext()"><span class="btn-text">Next</span> →</span>
@@ -356,21 +357,10 @@
 
     <div id="settings-panel" onclick="event.stopPropagation()">
         <h3 style="margin-top: 0; font-weight: 300; letter-spacing: 1px;">SYSTEM SETTINGS</h3>
-        
-        <div id="sync-status" style="margin-bottom: 20px; font-size: 12px; border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2);">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                <span style="opacity: 0.7;">Offline Sync:</span>
-                <span id="sync-percent" style="font-weight: bold; color: var(--accent-blue);">Initializing...</span>
-            </div>
-            <div style="width: 100%; height: 4px; background: var(--cell-bg); border-radius: 2px; overflow: hidden;">
-                <div id="sync-bar" style="width: 0%; height: 100%; background: var(--accent-blue); transition: width 0.3s;"></div>
-            </div>
-            <div id="sync-label" style="font-size: 10px; opacity: 0.5; margin-top: 5px; text-transform: uppercase;">Warming up sub-space links...</div>
-        </div>
-
         <button onclick="exportData()">Export Data</button>
         <button onclick="document.getElementById('import-file').click()">Import Data</button>
         <input type="file" id="import-file" style="display: none" accept=".json" onchange="importData(event)">
+        <div id="offline-status">Checking Archives...</div>
         <button onclick="toggleSettings()" style="background: var(--cell-bg); color: var(--text-color); margin-top: 20px;">Close</button>
     </div>
 
@@ -394,10 +384,11 @@
         let overridePending = [];
         const levelsCache = {};
         const pTypes = ['type-rocky', 'type-water', 'type-gas', 'type-ice'];
-        const sectorNames = ['Alpha Sector', 'Crimson Void', 'Azure Reach', 'Obsidian Gate', 'Emerald Nebula', 'Solar Forge', 'Neutron Star'];
+        const sectorNames = ['Alpha Sector', 'Crimson Void', 'Azure Reach', 'Obsidian Gate', 'Emerald Nebula', 'Amber Vault', 'Indigo Drift'];
 
         const getCompleted = () => JSON.parse(localStorage.getItem('zen_completed') || '[]');
         const getStates = () => JSON.parse(localStorage.getItem('proxima_states') || '{}');
+        const isGalaxyUnlocked = () => localStorage.getItem('proxima_galaxy_unlocked') === 'true';
         const saveState = (id, s) => {
             const all = getStates();
             all[id] = s;
@@ -415,7 +406,10 @@
             const p = document.getElementById('help-panel');
             const isHidden = p.style.display !== 'block';
             p.style.display = isHidden ? 'block' : 'none';
-            if (isHidden) document.getElementById('settings-panel').style.display = 'none';
+            if (isHidden) {
+                document.getElementById('settings-panel').style.display = 'none';
+                localStorage.setItem('proxima_has_seen_help', 'true');
+            }
         }
 
         function closeAllPanels() {
@@ -441,6 +435,21 @@
         }
 
         function performZoomIn(x, y, name, color) {
+            console.log("Zooming to:", name);
+            const completed = getCompleted();
+            const galaxyUnlocked = isGalaxyUnlocked();
+            
+            const alphaLevels = levelManifest.filter(l => l.sector === 'Alpha Sector');
+            const alphaCompleted = alphaLevels.length > 0 && alphaLevels.every(l => completed.includes(l.id));
+
+            if (name !== 'Alpha Sector' && !galaxyUnlocked && !alphaCompleted) {
+                showModal("Access Denied", "Alpha Sector stabilization required for further travel.", "Acknowledge", () => {}, true);
+                return;
+            } else if (alphaCompleted && !galaxyUnlocked) {
+                // One-time unlock trigger if zooming into a newly unlocked sector
+                localStorage.setItem('proxima_galaxy_unlocked', 'true');
+            }
+
             const isLandscape = window.innerWidth > window.innerHeight;
             document.body.style.setProperty('--zoom-x', (isLandscape ? x*0.8 : x) + '%');
             document.body.style.setProperty('--zoom-y', (isLandscape ? y*0.5 : y) + '%');
@@ -454,7 +463,6 @@
             const container = document.getElementById('planet-container');
             container.innerHTML = '';
             
-            const completed = getCompleted();
             const states = getStates();
             const sectorLevels = levelManifest.filter(l => l.sector === name);
             const baseR = 160;
@@ -486,9 +494,10 @@
         }
 
         function zoomOut() {
-            if (window.history.state && window.history.state.view === 'system') {
-                window.history.back();
+            if (document.getElementById('game-overlay').style.display === 'flex') {
+                exitGame();
             } else {
+                window.history.pushState({view: 'galaxy'}, '', window.location.pathname);
                 performZoomOut();
             }
         }
@@ -500,10 +509,20 @@
         }
 
         function exitGame() { 
-            if (window.history.state && window.history.state.view === 'game') {
-                window.history.back();
-            } else {
-                performExitGame();
+            performExitGame();
+            if (currentLevel && currentLevel.sector) {
+                // Find the original sector data to get the right color/coordinates
+                const sectorConfigs = {
+                    'Alpha Sector': { x: 0, y: 0, color: '#fab005' },
+                    'Crimson Void': { x: -13, y: 18, color: '#fa5252' },
+                    'Azure Reach': { x: 8, y: 28, color: '#1c7ed6' },
+                    'Obsidian Gate': { x: 28, y: 15, color: '#212529' },
+                    'Emerald Nebula': { x: 25, y: -12, color: '#40c057' },
+                    'Amber Vault': { x: -2, y: -33, color: '#fd7e14' },
+                    'Indigo Drift': { x: -33, y: -20, color: '#7048e8' }
+                };
+                const config = sectorConfigs[currentLevel.sector] || sectorConfigs['Alpha Sector'];
+                window.history.pushState({view: 'system', sector: currentLevel.sector, x: config.x, y: config.y, color: config.color}, '', `?sector=${currentLevel.sector.replace(/ /g, '_')}`);
             }
         }
 
@@ -512,17 +531,34 @@
         }
 
         async function loadLevel(id) {
-            window.history.pushState({view: 'game', id: id}, '', `?node=${id}`);
+            const manifestEntry = levelManifest.find(l => l.id === id);
+            const s = window.history.state || {};
+            window.history.pushState({
+                view: 'game', 
+                id: id, 
+                sector: manifestEntry ? manifestEntry.sector : s.sector,
+                x: s.x,
+                y: s.y,
+                color: s.color
+            }, '', `?node=${id}`);
             performLoadLevel(id);
         }
 
         async function performLoadLevel(id) {
+            console.log("Loading level:", id);
             let data = levelsCache[id];
             if (!data) {
-                const res = await fetch(`levels/${id}.json`);
-                data = await res.json();
-                data.id = id;
-                levelsCache[id] = data;
+                try {
+                    const res = await fetch(`levels/${id}.json`);
+                    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                    data = await res.json();
+                    data.id = id;
+                    levelsCache[id] = data;
+                } catch (e) {
+                    console.error("Failed to load level data:", e);
+                    showModal("Navigation Error", "Could not retrieve node data from the local archives.", "Acknowledge", () => { exitGame(); }, true);
+                    return;
+                }
             }
             currentLevel = data;
 
@@ -658,6 +694,7 @@
             if (currentLevel && currentLevel.sector) {
                 const sectorLevels = levelManifest.filter(l => l.sector === currentLevel.sector);
                 if (sectorLevels.every(l => done.includes(l.id))) {
+                    updateSectorStatus(); // Refresh galaxy colors
                     setTimeout(() => {
                         showModal("Sector Stabilized", `All nodes in ${currentLevel.sector} active.`, "Acknowledge", () => { exitGame(); }, true);
                     }, 500);
@@ -757,30 +794,31 @@
 
         async function init() {
             window.addEventListener('popstate', onPopState);
+            const res = await fetch('level_manifest.json');
+            levelManifest = await res.json();
+            updateSectorStatus();
 
-            // Service Worker progress listener
+            // Warm up the Service Worker cache with all levels from manifest
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.addEventListener('message', (event) => {
-                    if (event.data && event.data.type === 'CACHE_PROGRESS') {
-                        const { current, total } = event.data;
-                        const percent = Math.round((current / total) * 100);
-                        document.getElementById('sync-percent').innerText = percent === 100 ? "Ready" : `${percent}%`;
-                        document.getElementById('sync-bar').style.width = `${percent}%`;
-                        document.getElementById('sync-label').innerText = percent === 100 ? 
-                            "All sectors archived for offline play." : 
-                            `Archiving sector data (${current}/${total})...`;
+                navigator.serviceWorker.ready.then(registration => {
+                    if (registration.active) {
+                        const ids = levelManifest.map(l => l.id);
+                        registration.active.postMessage({ action: 'warmUp', ids });
                         
-                        if (percent === 100) {
-                            document.getElementById('sync-percent').style.color = 'var(--accent-green)';
-                            document.getElementById('sync-bar').style.background = 'var(--accent-green)';
+                        // Update status indicator
+                        const statusEl = document.getElementById('offline-status');
+                        if (statusEl) {
+                            caches.open('proxima8-v21').then(cache => {
+                                cache.keys().then(requests => {
+                                    const cachedLevels = requests.filter(r => r.url.includes('/levels/')).length;
+                                    if (cachedLevels >= levelManifest.length) statusEl.innerText = "All Sectors Archived Offline";
+                                    else statusEl.innerText = `Archiving Sectors: ${Math.round((cachedLevels/levelManifest.length)*100)}%`;
+                                });
+                            });
                         }
                     }
                 });
             }
-
-            const res = await fetch('level_manifest.json');
-            levelManifest = await res.json();
-            updateSectorStatus();
             
             // Handle direct deep links
             const params = new URLSearchParams(window.location.search);
@@ -796,25 +834,63 @@
                     // but for dev we'll just show the map for now.
                 }
             }
+
+            // Auto-show help if first visit
+            if (!localStorage.getItem('proxima_has_seen_help')) {
+                setTimeout(toggleHelp, 1000);
+            }
         }
 
         function updateSectorStatus() {
             const completed = getCompleted();
             const states = getStates();
+            const galaxyUnlocked = isGalaxyUnlocked();
+            
+            let alphaCompleted = false;
+            const alphaLevels = levelManifest.filter(l => l.sector === 'Alpha Sector');
+            alphaCompleted = alphaLevels.length > 0 && alphaLevels.every(l => completed.includes(l.id));
+            
+            if (alphaCompleted && !galaxyUnlocked) {
+                localStorage.setItem('proxima_galaxy_unlocked', 'true');
+            }
+
             sectorNames.forEach(name => {
                 const idSafe = name.replace(' ', '-');
                 const el = document.getElementById(`status-${idSafe}`);
-                if (!el) return;
+                const firstWord = idSafe.split('-')[0].toLowerCase();
+                const clusterId = `sector-${firstWord}`;
+                const cluster = document.getElementById(clusterId);
+                
+                if (!el || !cluster) {
+                    console.warn("Could not find elements for sector:", name, clusterId);
+                    return;
+                }
+
                 const sectorLevels = levelManifest.filter(l => l.sector === name);
                 const doneCount = sectorLevels.filter(l => completed.includes(l.id)).length;
                 const startedCount = sectorLevels.filter(l => states[l.id] && states[l.id].flat().some(c => c === 1)).length;
-                if (doneCount === sectorLevels.length && sectorLevels.length > 0) {
-                    el.innerText = "[Stable]";
-                    el.className = "cluster-status status-stable";
-                } else if (doneCount > 0 || startedCount > 0) {
-                    el.innerText = "[Scanning...]";
-                    el.className = "cluster-status status-scanning";
-                } else el.innerText = "";
+                
+                // Reset styles
+                cluster.style.opacity = "1";
+                cluster.style.filter = "none";
+                cluster.style.pointerEvents = "all";
+
+                if (name !== 'Alpha Sector' && !galaxyUnlocked && !alphaCompleted) {
+                    cluster.style.opacity = "0.4";
+                    cluster.style.filter = "grayscale(1)";
+                    el.innerText = "[Locked]";
+                    el.className = "cluster-status";
+                } else {
+                    if (doneCount === sectorLevels.length && sectorLevels.length > 0) {
+                        el.innerText = "[Stable]";
+                        el.className = "cluster-status status-stable";
+                    } else if (doneCount > 0 || startedCount > 0) {
+                        el.innerText = "[Scanning...]";
+                        el.className = "cluster-status status-scanning";
+                    } else {
+                        el.innerText = "";
+                    }
+                }
             });
         }
 
