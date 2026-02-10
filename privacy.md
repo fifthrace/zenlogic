@@ -2,7 +2,7 @@
 
 **Effective Date:** February 2, 2026
 
-Proxima 8 (the "App") is developed by [Your Studio Name/Robbie]. This Privacy Policy explains our practices regarding the collection, use, and disclosure of information when you use our App.
+Proxima 8 (the "App") is developed by Robbie Baxter (Bajo). This Privacy Policy explains our practices regarding the collection, use, and disclosure of information when you use our App.
 
 ### 1. Information Collection and Use
 Proxima 8 is designed to be a privacy-first experience. 
@@ -23,4 +23,4 @@ Our App does not address anyone under the age of 13. We do not knowingly collect
 We may update our Privacy Policy from time to time. You are advised to review this page periodically for any changes.
 
 ### 6. Contact Us
-If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at [Your Contact Email].
+If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at j.robert.baxter@gmail.com.
