@@ -270,7 +270,7 @@
         .modal-confirm { background: #fa5252; color: white; }
         .modal-cancel { background: var(--cell-bg); color: var(--text-color); }
 
-        /* Reclamation Vigil Button */
+        /* Daily Static Breach Button */
         #daily-btn {
             position: absolute;
             top: 30px;
@@ -342,7 +342,7 @@
         <button id="back-to-galaxy" onclick="zoomOut()" style="display:none;">← Galactic Chart</button>
         <div id="help-toggle" style="position: absolute; top: 30px; right: 70px; cursor: pointer; font-size: 20px; opacity: 0.4; color: var(--text-color); z-index: 100;" onclick="event.stopPropagation(); toggleHelp()">?</div>
         <div id="settings-toggle" onclick="event.stopPropagation(); toggleSettings()">⚙</div>
-        <button id="daily-btn" onclick="event.stopPropagation(); loadDailyChallenge()">Reclamation Vigil</button>
+        <button id="daily-btn" onclick="event.stopPropagation(); loadDailyChallenge()">Daily Static Breach</button>
     </div>
 
     <div id="game-overlay" onclick="closeAllPanels()">
@@ -631,7 +631,7 @@
             }
             history = [];
             
-            document.getElementById('game-header').innerText = data.name;
+            document.getElementById('game-header').innerText = id.startsWith('daily/') ? `Daily Static Breach [${id.split('/')[1]}]` : data.name;
             document.getElementById('game-overlay').style.display = 'flex';
             document.getElementById('share-btn').style.display = (completed.includes(id) || dailyCompleted[id]) ? 'block' : 'none';
             
@@ -1009,10 +1009,10 @@
             const dailyCompleted = JSON.parse(localStorage.getItem('proxima_daily_completed') || '{}');
             const btn = document.getElementById('daily-btn');
             if (dailyCompleted[id]) {
-                btn.innerText = "Reclamation Vigil: Stable";
+                btn.innerText = "Daily Static Breach: Stable";
                 btn.classList.add('stable');
             } else {
-                btn.innerText = "Reclamation Vigil";
+                btn.innerText = "Daily Static Breach";
                 btn.classList.remove('stable');
             }
         }
